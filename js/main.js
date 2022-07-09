@@ -1,8 +1,17 @@
 const form = document.querySelector("#form");
 const taskInput = document.querySelector("#taskInput");
 const tasksList = document.querySelector("#tasksList");
+const emptyList = document.querySelector("#emptyList");
 
-form.addEventListener("submit", function (event) {
+form.addEventListener("submit", addTask);
+
+// Видалення задач
+tasksList.addEventListener("click", deleteTask);
+
+// відмічаємо задачу завершено
+tasksList.addEventListener("click", doneTask);
+
+function addTask(event) {
   // відміняємо відправку форми
   event.preventDefault();
   // достаємо тест задачі з поля вводу
@@ -20,5 +29,34 @@ form.addEventListener("submit", function (event) {
   </button>
 </div>
 </li>`;
-  console.log(taskHTML);
-});
+  //   добавляємо задачу на сторінку
+  tasksList.insertAdjacentHTML("beforeend", taskHTML);
+
+  //    Очишчаємо поле вводу в відновлюємо на него фокус
+  taskInput.value = "";
+  taskInput.focus();
+  // Провірка якщо у  списку задач більше 1-го елемента то ми скриваємо блок список задач
+  if (emptyList.children.length > 1) {
+    emptyList.classList.add("none");
+  }
+}
+function deleteTask(event) {
+  // провіряємо что клік по кнопці "видалити кнопку" був
+  if (event.target.dataset.action === "delete") {
+    const perenNode = event.target.closest(`li`);
+    perenNode.remove();
+  }
+  //   якщо в списку задач 1 лемент показуємо блок список справ пустий
+  if (tasksList.children.length === 1) {
+    emptyList.classList.remove("none");
+  }
+}
+function doneTask(event) {
+  // провіряємо що був клік по кнопці 'задача виповнена'
+  if (event.target.dataset.action === "done") {
+    const parentNode = event.target.closest(".lisy-grouo-item");
+    const taskTitle = parentNode.querySelector(".task - title");
+
+    taskTitle.classList.toggle("task-title--done");
+  }
+}
